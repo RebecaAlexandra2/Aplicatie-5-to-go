@@ -31,6 +31,7 @@
       justify-content: space-between;
       align-items: center;
     }
+  
     header img {
       height: 45px;
       filter: drop-shadow(1px 1px 1px #c9a66b);
@@ -187,7 +188,7 @@
 <body>
   <header>
     <div class="container">
-      <img src="images/sigla.png" alt="5 to go Logo" />
+      <img src="logo.jpg" alt="5 to go Logo" />
       <nav>
         <a href="login.html">Autentificare</a>
         <a href="register.html">Creează cont</a>
@@ -200,6 +201,7 @@
 <select id="locatii-select">
   <option>Se încarcă locațiile...</option>
 </select>
+<p>Puncte fidelitate acumulate: <span id="puncte-fidelitate">0</span></p>
 
   <main>
     <h2 class="title">Meniul Nostru</h2>
@@ -207,28 +209,28 @@
       <div class="swiper-wrapper">
         <div class="swiper-slide">
             <div class="product-card" data-id="1"> 
-            <img class="product-image" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=80&q=80" alt="Cappuccino" />
+            <img class="product-image" src="cappucino.jpeg" alt="Cappuccino" />
             <h3>Cappuccino</h3>
             <p>Cafea Boabe (7 g), Lapte (150 ml)</p>
             <p>250 ml – 7 lei</p>
             <button class="adauga-cos">Adaugă în coș</button>
           </div>
           <div class="product-card" data-id="2"> 
-            <img class="product-image" src="https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=80&q=80" alt="Espresso" />
+            <img class="product-image" src="espresso.png" alt="Espresso" />
             <h3>Espresso</h3>
             <p>Cafea Boabe (7 g), Apă (30 ml)</p>
             <p>30 ml – 5 lei</p>
             <button class="adauga-cos">Adaugă în coș</button>
           </div>
           <div class="product-card" data-id="5"> 
-            <img class="product-image" src="https://images.unsplash.com/photo-1510626176961-4b44b2f52eae?auto=format&fit=crop&w=80&q=80" alt="Frappe Mic" />
+            <img class="product-image" src="FRAPPEmic.png" alt="Frappe Mic" />
             <h3>Frappe Mic</h3>
             <p>Ness (7 g), Lapte (150 ml), Gheață (100 g)</p>
             <p>350 ml – 10 lei</p>
             <button class="adauga-cos">Adaugă în coș</button>
           </div>
           <div class="product-card" data-id="9"> 
-            <img class="product-image" src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=80&q=80" alt="Boba Tea" />
+            <img class="product-image" src="Bobatea.png" alt="Boba Tea" />
             <h3>Boba Tea</h3>
             <p>Apă, Sirop Fructe de Pădure, Boba Pearls</p>
             <p>500 ml – 15 lei</p>
@@ -237,28 +239,28 @@
         </div>
         <div class="swiper-slide">
             <div class="product-card" data-id="11"> 
-            <img class="product-image" src="https://images.unsplash.com/photo-1551024601-bec78faa8d3a?auto=format&fit=crop&w=80&q=80" alt="Mr Big" />
+            <img class="product-image" src="mrbig.jpeg" alt="Mr Big" />
             <h3>Mr Big</h3>
             <p>Cafea Boabe (14 g), Lapte (300 ml)</p>
             <p>400 ml – 11 lei</p>
             <button class="adauga-cos">Adaugă în coș</button>
           </div>
           <div class="product-card" data-id="12"> 
-            <img class="product-image" src="https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=80&q=80" alt="Americano" />
+            <img class="product-image" src="americano.png" alt="Americano" />
             <h3>Americano</h3>
             <p>Apă (200 ml), Cafea Boabe (7 g)</p>
             <p>200 ml – 5 lei</p>
             <button class="adauga-cos">Adaugă în coș</button>
           </div>
           <div class="product-card" data-id="10"> 
-            <img class="product-image" src="https://images.unsplash.com/photo-1514432324607-a09d9a9fba14?auto=format&fit=crop&w=80&q=80" alt="Flat White" />
+            <img class="product-image" src="flatwhite.jpeg" alt="Flat White" />
             <h3>Flat White</h3>
             <p>Cafea Boabe (7 g), Lapte (150 ml)</p>
             <p>250 ml – 10 lei</p>
             <button class="adauga-cos">Adaugă în coș</button>
           </div>
           <div class="product-card" data-id="4"> 
-            <img class="product-image" src="https://images.unsplash.com/photo-1510626176961-4b44b2f52eae?auto=format&fit=crop&w=80&q=80" alt="Caffe Latte" />
+            <img class="product-image" src="Latte.jpg" alt="Caffe Latte" />
             <h3>Caffe Latte</h3>
             <p>Cafea Boabe (7 g), Lapte (200 ml)</p>
             <p>300 ml – 9 lei</p>
@@ -267,28 +269,28 @@
         </div>
         <div class="swiper-slide">
             <div class="product-card" data-id="6"> 
-            <img class="product-image" src="https://images.unsplash.com/photo-1510626176961-4b44b2f52eae?auto=format&fit=crop&w=80&q=80" alt="Frappe Mare" />
+            <img class="product-image" src="Frappemare.png" alt="Frappe Mare" />
             <h3>Frappe Mare</h3>
             <p>Ness (14 g), Lapte (200 ml), Gheață (150 g)</p>
             <p>500 ml – 15 lei</p>
             <button class="adauga-cos">Adaugă în coș</button>
           </div>
           <div class="product-card" data-id="7"> 
-            <img class="product-image" src="https://images.unsplash.com/photo-1510626176961-4b44b2f52eae?auto=format&fit=crop&w=80&q=80" alt="Iced Coffee Mic" />
+            <img class="product-image" src="icedcoffeemic.jpeg" alt="Iced Coffee Mic" />
             <h3>Iced Coffee Mic</h3>
             <p>Cafea Boabe (7 g), Apă (100 ml), Gheață (100 g)</p>
             <p>400 ml – 10 lei</p>
             <button class="adauga-cos">Adaugă în coș</button>
           </div>
           <div class="product-card" data-id="8"> 
-            <img class="product-image" src="https://images.unsplash.com/photo-1510626176961-4b44b2f52eae?auto=format&fit=crop&w=80&q=80" alt="Iced Coffee Mare" />
+            <img class="product-image" src="icedcoffeemare.jpeg" alt="Iced Coffee Mare" />
             <h3>Iced Coffee Mare</h3>
             <p>Cafea Boabe (14 g), Apă (150 ml), Gheață (150 g)</p>
             <p>600 ml – 15 lei</p>
             <button class="adauga-cos">Adaugă în coș</button>
           </div>
           <div class="product-card" data-id="3"> 
-            <img class="product-image" src="https://images.unsplash.com/photo-1510626176961-4b44b2f52eae?auto=format&fit=crop&w=80&q=80" alt="Espresso Dublu" />
+            <img class="product-image" src="espresoodublu.jpg" alt="Espresso Dublu" />
             <h3>Espresso Dublu</h3>
             <p>Cafea Boabe (14 g), Apă (60 ml)</p>
             <p>60 ml – 5 lei</p>
@@ -404,9 +406,39 @@ document.addEventListener("DOMContentLoaded", () => {
   updateCartView();
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const nav = document.querySelector("nav");
+  if (!nav) return;
+
+  if (user) {
+    // Dacă userul e logat, ascundem linkurile de login/register
+    nav.querySelectorAll("a").forEach(a => {
+      if (a.textContent === "Autentificare" || a.textContent === "Creează cont") {
+        a.style.display = "none";
+      }
+    });
+
+    // Adăugăm în nav profilul userului + buton logout
+    const profilSpan = document.createElement("span");
+    profilSpan.innerHTML = `
+      Salut, <strong>${user.name}</strong>! 
+      <button id="logout-btn" style="margin-left:15px; cursor:pointer;">Deconectare</button>
+    `;
+    nav.appendChild(profilSpan);
+
+    // Buton logout
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      localStorage.removeItem("user");
+      location.reload();
+    });
+  }
+});
 
 </script>
 <script src="script.js"></script>
 <script src="locatii.js"></script>
+<style src="styles.css"></style>
 </body>
 </html>
