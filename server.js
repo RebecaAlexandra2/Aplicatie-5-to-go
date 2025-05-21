@@ -78,10 +78,10 @@ app.get("/meniu", async (req, res) => {
 
 // Ruta pentru locații
 app.get("/locatii", async (req, res) => {
-  let connection;
-  try {
-    connection = await connectDB();
+  const connection = await connectDB();
+  if (!connection) return res.status(500).send("Eroare la conectare la BD");
 
+  try {
     const result = await connection.execute(
       `SELECT id, name, address, phone FROM locations`,
       [],
@@ -90,13 +90,12 @@ app.get("/locatii", async (req, res) => {
     res.json(result.rows);
   } catch (error) {
     console.error("❌ Eroare la /locatii:", error);
-    res.status(500).send("Eroare la interogare locațiilor.");
+    res.status(500).send("Eroare la interogare locații.");
   } finally {
-    if (connection) {
-      try { await connection.close(); } catch (e) { console.error(e); }
-    }
+    await connection.close();
   }
 });
+
 
 // Înregistrare cont nou cu parolă criptată
 app.post("/register", async (req, res) => {
@@ -155,6 +154,7 @@ app.post("/login", async (req, res) => {
     }
   }
 });
+
 app.post("/verifica-stoc", async (req, res) => {
   const { productId, quantity } = req.body;
   
@@ -172,9 +172,10 @@ app.post("/verifica-stoc", async (req, res) => {
       { productId },
       { outFormat: oracledb.OUT_FORMAT_OBJECT }
     );
-
+    
+    
     const maxProduse = maxResult.rows[0]?.MAX_PRODUSE_POSIBILE ?? 0;
-
+    
     if (quantity > maxProduse) {
       return res.json({
         ok: false,
@@ -192,9 +193,111 @@ app.post("/verifica-stoc", async (req, res) => {
   }
 });
 
-
-// Pornire server
 app.listen(PORT, () => {
   console.log(`✅ Serverul rulează pe portul ${PORT}`);
 });
 
+app.post("/finalizeaza-comanda", async (req, res) => {
+  const { userId, produse } = req.body; // produse = [{ id, price }, ...]
+
+  let connection;
+  try {
+    connection = await connectDB();
+
+    // Calculează suma totală
+    const totalComanda = produse.reduce((acc, p) => acc + p.price, 0);
+
+    // Calculează punctele câștigate (1 punct per leu)
+    const puncteCastigate = Math.floor(totalComanda);
+
+    // Actualizează punctele utilizatorului
+    await connection.execute(
+      `UPDATE users SET fidelitate_puncte = NVL(fidelitate_puncte, 0) + :puncte WHERE id = :userId`,
+      { puncte: puncteCastigate, userId },
+      { autoCommit: false }
+    );
+
+    // Inserează în istoricul fidelității
+    await connection.execute(
+      `INSERT INTO fidelitate_tranzactii (user_id, puncte, descriere) VALUES (:userId, :puncte, :descriere)`,
+      { userId, puncte: puncteCastigate, descriere: "Puncte câștigate la comandă" },
+      { autoCommit: true }
+    );
+
+    res.send(`Comandă finalizată cu succes! Ai câștigat ${puncteCastigate} puncte fidelitate.`);
+  } catch (error) {
+    console.error("❌ Eroare la finalizarea comenzii:", error);
+    res.status(500).send("Eroare la finalizarea comenzii.");
+  } finally {
+    if (connection) {
+      try { await connection.close(); } catch (e) { console.error(e); }
+    }
+  }
+});
+
+
+app.get("/fidelitate/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  let connection;
+  try {
+    connection = await connectDB();
+
+    const result = await connection.execute(
+      `SELECT NVL(fidelitate_puncte, 0) AS puncte FROM users WHERE id = :userId`,
+      { userId },
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
+
+    const puncte = result.rows[0]?.PUNCTE || 0;
+    res.json({ puncte });
+  } catch (error) {
+    console.error("❌ Eroare la obținerea punctelor:", error);
+    res.status(500).send("Eroare la obținerea punctelor.");
+  } finally {
+    if (connection) {
+      try { await connection.close(); } catch (e) { console.error(e); }
+    }
+  }
+});
+app.post("/foloseste-puncte", async (req, res) => {
+  const { userId, puncteFolosite } = req.body;
+  let connection;
+  try {
+    connection = await connectDB();
+
+    // Verifică punctele disponibile
+    const result = await connection.execute(
+      `SELECT NVL(fidelitate_puncte, 0) AS puncte FROM users WHERE id = :userId`,
+      { userId },
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
+    const puncteDisponibile = result.rows[0]?.PUNCTE || 0;
+
+    if (puncteFolosite > puncteDisponibile) {
+      return res.status(400).json({ mesaj: "Nu ai suficiente puncte." });
+    }
+
+    // Scade punctele
+    await connection.execute(
+      `UPDATE users SET fidelitate_puncte = fidelitate_puncte - :puncte WHERE id = :userId`,
+      { puncte: puncteFolosite, userId },
+      { autoCommit: false }
+    );
+
+    // Inserează tranzacția negativă în istoric
+    await connection.execute(
+      `INSERT INTO fidelitate_tranzactii (user_id, puncte, descriere) VALUES (:userId, -:puncte, :descriere)`,
+      { userId, puncte: puncteFolosite, descriere: "Folosire puncte fidelitate" },
+      { autoCommit: true }
+    );
+
+    res.send(`Ai folosit ${puncteFolosite} puncte fidelitate.`);
+  } catch (error) {
+    console.error("❌ Eroare la folosirea punctelor:", error);
+    res.status(500).send("Eroare la folosirea punctelor.");
+  } finally {
+    if (connection) {
+      try { await connection.close(); } catch (e) { console.error(e); }
+    }
+  }
+});
