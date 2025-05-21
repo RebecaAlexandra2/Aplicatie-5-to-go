@@ -1,0 +1,218 @@
+body {
+  background: linear-gradient(135deg, #f5f0e6, #d6b983);
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #4a2f1a;
+}
+
+header {
+  background: #6f4e37;
+  padding: 15px 30px;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+header .container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header img {
+  height: 45px;
+  filter: drop-shadow(1px 1px 1px #c9a66b);
+}
+
+nav a {
+  color: #ffd17a;
+  margin-left: 25px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: color 0.3s;
+  position: relative;
+}
+
+nav a:hover {
+  color: #fff;
+}
+
+#nr-produse-cos {
+  position: absolute;
+  top: -10px;
+  right: -15px;
+  background: #fff0b2;
+  color: #6f4e37;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+  box-shadow: 0 0 5px #d6b983;
+}
+
+main {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+h2.title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #4a2f1a;
+  text-shadow: 1px 1px 0 #d6b983;
+}
+
+.swiper {
+  padding: 30px 10px 50px;
+  background: #fff8e1;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(214, 185, 131, 0.4);
+}
+
+.swiper-slide {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 18px;
+  padding: 15px;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 6px 20px rgba(214, 185, 131, 0.2);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: scale(1.07);
+  box-shadow: 0 12px 28px rgba(214, 185, 131, 0.5);
+}
+
+.product-image {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 15px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(214, 185, 131, 0.6);
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.15) rotate(10deg);
+}
+
+.product-card h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #4a2f1a;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+.product-card p {
+  font-size: 0.95rem;
+  color: #6f4e37;
+  text-align: center;
+  margin: 8px 0;
+  font-weight: 600;
+}
+
+.product-card button {
+  background: #d69f6b;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 6px 12px rgba(214, 185, 131, 0.5);
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.product-card button:hover {
+  background: #b87f4e;
+}
+
+.swiper-button-next, .swiper-button-prev {
+  color: #6f4e37;
+  filter: drop-shadow(0 0 2px rgba(214, 185, 131, 0.8));
+}
+
+section#cos {
+  margin-top: 50px;
+  background: #fff8e1;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 6px 15px rgba(214, 185, 131, 0.3);
+  font-weight: 600;
+  color: #4a2f1a;
+}
+
+section#cos h2 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+#cos-produse p {
+  font-style: italic;
+  font-weight: 400;
+  color: #a18c71;
+}
+
+#finalizare-comanda {
+  margin-top: 20px;
+  background: #d69f6b;
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 30px;
+  font-weight: 900;
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s ease;
+}
+
+#finalizare-comanda:hover {
+  background: #b87f4e;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  max-height: 80%;
+  overflow-y: auto;
+}

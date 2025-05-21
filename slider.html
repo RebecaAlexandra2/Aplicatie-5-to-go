@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Băuturi 5 to go - Slider</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+    }
+    .slider-container {
+      position: relative;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 20px;
+    }
+    .product-card {
+      display: inline-block;
+      vertical-align: top;
+      background: white;
+      width: 220px;
+      margin-right: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 16px;
+    }
+    .product-card h3 {
+      margin-top: 0;
+      font-size: 1.1em;
+    }
+    .product-card p {
+      margin: 6px 0;
+      font-size: 0.95em;
+    }
+    .product-card button {
+      background-color: #d69f6b;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .product-card button:hover {
+      background-color: #b67f4e;
+    }
+  </style>
+</head>
+<body>
+
+<h2 style="padding: 20px;">Meniul nostru</h2>
+<div class="slider-container">
+  <div class="product-card">
+    <h3>Cappuccino</h3>
+    <p><strong>Ingrediente:</strong> Cafea Boabe (7 g), Lapte (150 ml)</p>
+    <p><strong>Gramaj:</strong> 250 ml</p>
+    <p><strong>Preț:</strong> 7 lei</p>
+    <button>Adaugă în coș</button>
+  </div>
+  <div class="product-card">
+    <h3>Espresso</h3>
+    <p><strong>Ingrediente:</strong> Apă (30 ml), Cafea Boabe (7 g)</p>
+    <p><strong>Gramaj:</strong> 30 ml</p>
+    <p><strong>Preț:</strong> 5 lei</p>
+    <button>Adaugă în coș</button>
+  </div>
+  <div class="product-card">
+    <h3>Frappe Mic</h3>
+    <p><strong>Ingrediente:</strong> Gheață (100 g), Lapte (150 ml), Ness (7 g)</p>
+    <p><strong>Gramaj:</strong> 350 ml</p>
+    <p><strong>Preț:</strong> 10 lei</p>
+    <button>Adaugă în coș</button>
+  </div>
+  <div class="product-card">
+    <h3>Iced Coffee Mare</h3>
+    <p><strong>Ingrediente:</strong> Apă (150 ml), Cafea Boabe (14 g), Gheață (150 g)</p>
+    <p><strong>Gramaj:</strong> 600 ml</p>
+    <p><strong>Preț:</strong> 15 lei</p>
+    <button>Adaugă în coș</button>
+  </div>
+  <div class="product-card">
+    <h3>Boba Tea</h3>
+    <p><strong>Ingrediente:</strong> Apă (200 ml), Boba Pearls - Căpșuni (100 g), Sirop Fructe de Pădure (200 ml)</p>
+    <p><strong>Gramaj:</strong> 500 ml</p>
+    <p><strong>Preț:</strong> 15 lei</p>
+    <button>Adaugă în coș</button>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin 5 to go</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header-simplu">
+    <h2 style="margin-left: 20px;">Panou Admin</h2>
+  </header>
+
+  <main>
+    <section>
+      <h3>Adaugă produs</h3>
+      <form id="form-produs">
+        <input type="text" placeholder="Nume produs" id="nume" required>
+        <input type="number" placeholder="Preț" id="pret" required>
+        <input type="number" placeholder="Gramaj (ml)" id="gramaj" required>
+        <button type="submit">Adaugă</button>
+      </form>
+      <p id="admin-message"></p>
+    </section>
+
+    <section>
+      <h3>Produse existente</h3>
+      <div id="lista-produse"></div>
+    </section>
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>5 to go - Meniu WOW</title>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+  />
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f0e6, #d6b983);
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #4a2f1a;
+    }
+    header {
+      background: #6f4e37;
+      padding: 15px 30px;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      color: #fff;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+    header .container {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header img {
+      height: 45px;
+      filter: drop-shadow(1px 1px 1px #c9a66b);
+    }
+    nav a {
+      color: #ffd17a;
+      margin-left: 25px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: color 0.3s;
+      position: relative;
+    }
+    nav a:hover {
+      color: #fff;
+    }
+    #nr-produse-cos {
+      position: absolute;
+      top: -10px;
+      right: -15px;
+      background: #fff0b2;
+      color: #6f4e37;
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-weight: 700;
+      box-shadow: 0 0 5px #d6b983;
+    }
+    main {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    h2.title {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #4a2f1a;
+      text-shadow: 1px 1px 0 #d6b983;
+    }
+    .swiper {
+      padding: 30px 10px 50px;
+      background: #fff8e1;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(214, 185, 131, 0.4);
+    }
+    .swiper-slide {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 18px;
+      padding: 15px;
+    }
+    .product-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 6px 20px rgba(214, 185, 131, 0.2);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .product-card:hover {
+      transform: scale(1.07);
+      box-shadow: 0 12px 28px rgba(214, 185, 131, 0.5);
+    }
+    .product-image {
+      width: 90px;
+      height: 90px;
+      margin-bottom: 15px;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(214, 185, 131, 0.6);
+      transition: transform 0.4s ease;
+    }
+    .product-card:hover .product-image {
+      transform: scale(1.15) rotate(10deg);
+    }
+    .product-card h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: #4a2f1a;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+    }
+    .product-card p {
+      font-size: 0.95rem;
+      color: #6f4e37;
+      text-align: center;
+      margin: 8px 0;
+      font-weight: 600;
+    }
+    .product-card button {
+      background: #d69f6b;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 6px 12px rgba(214, 185, 131, 0.5);
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .product-card button:hover {
+      background: #b87f4e;
+    }
+    .swiper-button-next, .swiper-button-prev {
+      color: #6f4e37;
+      filter: drop-shadow(0 0 2px rgba(214, 185, 131, 0.8));
+    }
+    section#cos {
+      margin-top: 50px;
+      background: #fff8e1;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 6px 15px rgba(214, 185, 131, 0.3);
+      font-weight: 600;
+      color: #4a2f1a;
+    }
+    section#cos h2 {
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+    #cos-produse p {
+      font-style: italic;
+      font-weight: 400;
+      color: #a18c71;
+    }
+    #finalizare-comanda {
+      margin-top: 20px;
+      background: #d69f6b;
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 30px;
+      font-weight: 900;
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.3s ease;
+    }
+    #finalizare-comanda:hover {
+      background: #b87f4e;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <img src="images/sigla.png" alt="5 to go Logo" />
+      <nav>
+        <a href="login.html">Autentificare</a>
+        <a href="register.html">Creează cont</a>
+        <a href="#cos" class="cart-link">
+          🛒 <span id="nr-produse-cos">0</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+<select id="locatii-select">
+  <option>Se încarcă locațiile...</option>
+</select>
+
+  <main>
+    <h2 class="title">Meniul Nostru</h2>
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+            <div class="product-card" data-id="1"> 
+            <img class="product-image" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=80&q=80" alt="Cappuccino" />
+            <h3>Cappuccino</h3>
+            <p>Cafea Boabe (7 g), Lapte (150 ml)</p>
+            <p>250 ml – 7 lei</p>
+            <button class="adauga-cos">Adaugă în coș</button>
+          </div>
+          <div class="product-card" data-id="2"> 
+            <img class="product-image" src="https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=80&q=80" alt="Espresso" />
+            <h3>Espresso</h3>
+            <p>Cafea Boabe (7 g), Apă (30 ml)</p>
+            <p>30 ml – 5 lei</p>
+            <button class="adauga-cos">Adaugă în coș</button>
+          </div>
+          <div class="product-card" data-id="5"> 
+            <img class="product-image" src="https://images.unsplash.com/photo-1510626176961-4b44b2f52eae?auto=format&fit=crop&w=80&q=80" alt="Frappe Mic" />
+            <h3>Frappe Mic</h3>
+            <p>Ness (7 g), Lapte (150 ml), Gheață (100 g)</p>
+            <p>350 ml – 10 lei</p>
+            <button class="adauga-cos">Adaugă în coș</button>
+          </div>
+          <div class="product-card" data-id="9"> 
+            <img class="product-image" src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=80&q=80" alt="Boba Tea" />
+            <h3>Boba Tea</h3>
+            <p>Apă, Sirop Fructe de Pădure, Boba Pearls</p>
+            <p>500 ml – 15 lei</p>
+            <button class="adauga-cos">Adaugă în coș</button>
+          </div>
+        </div>
+        <div class="swiper-slide">
+            <div class="product-card" data-id="11"> 
+            <img class="product-image" src="https://images.unsplash.com/photo-1551024601-bec78faa8d3a?auto=format&fit=crop&w=80&q=80" alt="Mr Big" />
+            <h3>Mr Big</h3>
+            <p>Cafea Boabe (14 g), Lapte (300 ml)</p>
+            <p>400 ml – 11 lei</p>
+            <button class="adauga-cos">Adaugă în coș</button>
+          </div>
+          <div class="product-card" data-id="12"> 
+            <img class="product-image" src="https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=80&q=80" alt="Americano" />
+            <h3>Americano</h3>
+            <p>Apă (200 ml), Cafea Boabe (7 g)</p>
+            <p>200 ml – 5 lei</p>
+            <button class="adauga-cos">Adaugă în coș</button>
+          </div>
+          <div class="product-card" data-id="10"> 
+            <img class="product-image" src="https://images.unsplash.com/photo-1514432324607-a09d9a9fba14?auto=format&fit=crop&w=80&q=80" alt="Flat White" />
+            <h3>Flat White</h3>
+            <p>Cafea Boabe (7 g), Lapte (150 ml)</p>
+            <p>250 ml – 10 lei</p>
+            <button class="adauga-cos">Adaugă în coș</button>
+          </div>
+          <div class="product-card" data-id="4"> 
+            <img class="product-image" src="https://images.unsplash.com/photo-1510626176961-4b44b2f52eae?auto=format&fit=crop&w=80&q=80" alt="Caffe Latte" />
+            <h3>Caffe Latte</h3>
+            <p>Cafea Boabe (7 g), Lapte (200 ml)</p>
+            <p>300 ml – 9 lei</p>
+            <button class="adauga-cos">Adaugă în coș</button>
+          </div>
+        </div>
+        <div class="swiper-slide">
+            <div class="product-card" data-id="6"> 
+            <img class="product-image" src="https://images.unsplash.com/photo-1510626176961-4b44b2f52eae?auto=format&fit=crop&w=80&q=80" alt="Frappe Mare" />
+            <h3>Frappe Mare</h3>
+            <p>Ness (14 g), Lapte (200 ml), Gheață (150 g)</p>
+            <p>500 ml – 15 lei</p>
+            <button class="adauga-cos">Adaugă în coș</button>
+          </div>
+          <div class="product-card" data-id="7"> 
+            <img class="product-image" src="https://images.unsplash.com/photo-1510626176961-4b44b2f52eae?auto=format&fit=crop&w=80&q=80" alt="Iced Coffee Mic" />
+            <h3>Iced Coffee Mic</h3>
+            <p>Cafea Boabe (7 g), Apă (100 ml), Gheață (100 g)</p>
+            <p>400 ml – 10 lei</p>
+            <button class="adauga-cos">Adaugă în coș</button>
+          </div>
+          <div class="product-card" data-id="8"> 
+            <img class="product-image" src="https://images.unsplash.com/photo-1510626176961-4b44b2f52eae?auto=format&fit=crop&w=80&q=80" alt="Iced Coffee Mare" />
+            <h3>Iced Coffee Mare</h3>
+            <p>Cafea Boabe (14 g), Apă (150 ml), Gheață (150 g)</p>
+            <p>600 ml – 15 lei</p>
+            <button class="adauga-cos">Adaugă în coș</button>
+          </div>
+          <div class="product-card" data-id="3"> 
+            <img class="product-image" src="https://images.unsplash.com/photo-1510626176961-4b44b2f52eae?auto=format&fit=crop&w=80&q=80" alt="Espresso Dublu" />
+            <h3>Espresso Dublu</h3>
+            <p>Cafea Boabe (14 g), Apă (60 ml)</p>
+            <p>60 ml – 5 lei</p>
+            <button class="adauga-cos">Adaugă în coș</button>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+
+    <section id="cos">
+      <h2>Coșul Tău</h2>
+      <div id="cos-produse">
+        <p>Momentan coșul este gol.</p>
+      </div>
+      <button id="finalizare-comanda">Finalizare Comandă</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 5 to go - Toate drepturile rezervate</p>
+  </footer>
+
+  <div id="modal-verificare" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <p id="mesaj-verificare"></p>
+      <button onclick="document.getElementById('modal-verificare').style.display='none'">Închide</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    const swiper = new Swiper('.swiper', {
+      slidesPerView: 1,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+      }
+    });
+  </script>
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("modal-verificare");
+  const modalMesaj = document.getElementById("mesaj-verificare");
+  const cosProduse = document.getElementById("cos-produse");
+  const finalizeazaBtn = document.getElementById("finalizare-comanda");
+  const cartCount = document.getElementById("nr-produse-cos");
+
+  let cos = [];
+
+  function showModal(mesaj) {
+  const modal = document.getElementById("modal-verificare");
+  const modalMesaj = document.getElementById("mesaj-verificare");
+  modalMesaj.innerHTML = mesaj;
+  modal.style.display = "flex";
+}
+
+
+  modal.querySelector("button").addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+
+  function updateCartCount() {
+    cartCount.textContent = cos.length;
+  }
+
+  function updateCartView() {
+    if (cos.length === 0) {
+      cosProduse.innerHTML = "<p>Momentan coșul este gol.</p>";
+      return;
+    }
+    cosProduse.innerHTML = "";
+    cos.forEach(item => {
+      const p = document.createElement("p");
+      p.textContent = `${item.name} - ${item.price} lei`;
+      cosProduse.appendChild(p);
+    });
+  }
+
+  document.body.addEventListener("click", (event) => {
+    if (event.target.classList.contains("adauga-cos")) {
+      const produsCard = event.target.closest(".product-card");
+      if (!produsCard) return;
+
+      const name = produsCard.querySelector("h3").textContent;
+      const pretText = produsCard.querySelectorAll("p")[1].textContent; // ex: "250 ml – 7 lei"
+      const priceMatch = pretText.match(/(\d+(\.\d+)?)\s*lei/);
+      const price = priceMatch ? parseFloat(priceMatch[1]) : 0;
+
+      // Afiseaza modal local (fără backend)
+      showModal(`<p>Produsul <strong>${name}</strong> a fost adăugat în coș.</p>`);
+
+      cos.push({ name, price });
+      updateCartCount();
+      updateCartView();
+    }
+  });
+  
+
+  finalizeazaBtn.addEventListener("click", () => {
+    if (cos.length === 0) {
+      alert("❌ Coșul este gol!");
+      return;
+    }
+    alert(`✅ Ai finalizat comanda cu ${cos.length} produse.`);
+    cos = [];
+    updateCartCount();
+    updateCartView();
+  });
+
+  updateCartCount();
+  updateCartView();
+});
+
+
+</script>
+<script src="script.js"></script>
+<script src="locatii.js"></script>
+</body>
+</html>
