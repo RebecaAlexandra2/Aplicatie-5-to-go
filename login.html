@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autentificare</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Autentificare - 5 to go</title>
+    <link rel="stylesheet" href="login.css" />
 </head>
 <body>
-    <header>
-        <h1>Autentificare</h1>
-    </header>
-
+  <main class="login-container">
+    <h1>Autentificare</h1>
     <section id="login">
-        <form id="login-form">
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
-
-            <label for="password">Parolă:</label>
-            <input type="password" id="password" required>
-
-            <button type="submit">Autentificare</button>
-        </form>
-        <p id="login-message"></p>
+      <form id="login-form">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required placeholder="exemplu@domain.com" />
+          
+          <label for="password">Parolă</label>
+          <input type="password" id="password" name="password" required placeholder="••••••••" />
+          
+          <button type="submit">Conectează-te</button>
+      </form>
+      <p id="login-message" class="message"></p>
+      <p>Nu ai cont? <a href="register.html">Înregistrează-te aici</a></p>
     </section>
+  </main>
 
-    <script src="login.js"></script>
+  <script src="login.js"></script>
 </body>
 </html>
