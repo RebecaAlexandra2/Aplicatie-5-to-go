@@ -121,40 +121,6 @@ app.post("/register", async (req, res) => {
   }
 });
 
-// Autentificare utilizator
-app.post("/login", async (req, res) => {
-  let connection;
-  const { email, password } = req.body;
-  try {
-    connection = await connectDB();
-
-    const result = await connection.execute(
-      `SELECT * FROM users WHERE email = :email`,
-      [email],
-      { outFormat: oracledb.OUT_FORMAT_OBJECT }
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(401).json({ message: "Email inexistent" });
-    }
-
-    const user = result.rows[0];
-    const match = await bcrypt.compare(password, user.PASSWORD);
-    if (!match) {
-      return res.status(401).json({ message: "Parolă incorectă" });
-    }
-
-    res.json({ user: { id: user.ID, name: user.NAME, email: user.EMAIL, role: user.ROLE } });
-  } catch (error) {
-    console.error("❌ Eroare la /login:", error);
-    res.status(500).send("Eroare la autentificare");
-  } finally {
-    if (connection) {
-      try { await connection.close(); } catch (e) { console.error(e); }
-    }
-  }
-});
-
 app.post("/verifica-stoc", async (req, res) => {
   const { productId, quantity } = req.body;
   
@@ -301,3 +267,137 @@ app.post("/foloseste-puncte", async (req, res) => {
     }
   }
 });
+
+// Login endpoint (presupunem că ai rolul în coloana ROLE)
+app.post("/login", async (req, res) => {
+  let connection;
+  const { email, password } = req.body;
+  try {
+    connection = await connectDB();
+
+    const result = await connection.execute(
+      `SELECT * FROM users WHERE email = :email`,
+      [email],
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ message: "Email inexistent" });
+    }
+
+    const user = result.rows[0];
+    const match = await bcrypt.compare(password, user.PASSWORD);
+    if (!match) {
+      return res.status(401).json({ message: "Parolă incorectă" });
+    }
+
+    res.json({ 
+      user: { 
+        id: user.ID, 
+        name: user.NAME, 
+        email: user.EMAIL, 
+        role: user.ROLE  // asigură-te că ai coloana ROLE în BD
+      } 
+    });
+  } catch (error) {
+    console.error("❌ Eroare la /login:", error);
+    res.status(500).send("Eroare la autentificare");
+  } finally {
+    if (connection) {
+      try { await connection.close(); } catch (e) { console.error(e); }
+    }
+  }
+});
+app.get("/raport-vanzari-zi", async (req, res) => {
+  let connection;
+  try {
+    connection = await connectDB();
+
+    const result = await connection.execute(
+      `SELECT 
+          TO_CHAR(order_date, 'YYYY-MM-DD') AS data, 
+          COUNT(*) AS numar_comenzi, 
+          SUM(total_price) AS valoare_totala
+       FROM orders
+       GROUP BY TO_CHAR(order_date, 'YYYY-MM-DD')
+       ORDER BY data DESC`,
+      [],
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("❌ Eroare la raport:", error);
+    res.status(500).send("Eroare la generarea raportului");
+  } finally {
+    if (connection) {
+      try { await connection.close(); } catch (e) { console.error(e); }
+    }
+  }
+});
+app.post("/adauga-produs", async (req, res) => {
+  const { name, price, gramaj } = req.body;
+
+  let connection;
+  try {
+    connection = await connectDB();
+
+    await connection.execute(
+      `INSERT INTO products (name, price, gramaj) VALUES (:name, :price, :gramaj)`,
+      { name, price, gramaj },
+      { autoCommit: true }
+    );
+
+    res.send("Produs adăugat cu succes!");
+  } catch (error) {
+    console.error("❌ Eroare la adăugarea produsului:", error);
+    res.status(500).send("Eroare la adăugarea produsului.");
+  } finally {
+    if (connection) {
+      try { await connection.close(); } catch (e) { console.error(e); }
+    }
+  }
+});
+// Ruta pentru listarea produselor (poți adapta din ce ai deja)
+app.get("/produse", async (req, res) => {
+  let connection;
+  try {
+    connection = await connectDB();
+    const result = await connection.execute(
+      `SELECT id, name, price, gramaj FROM products`,
+      [],
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error("❌ Eroare la listarea produselor:", error);
+    res.status(500).send("Eroare la listarea produselor.");
+  } finally {
+    if (connection) {
+      try { await connection.close(); } catch (e) { console.error(e); }
+    }
+  }
+});
+
+// Ruta pentru ștergerea produsului după ID
+app.delete("/sterge-produs/:id", async (req, res) => {
+  const productId = req.params.id;
+  let connection;
+  try {
+    connection = await connectDB();
+    await connection.execute(
+      `DELETE FROM products WHERE id = :id`,
+      { id: productId },
+      { autoCommit: true }
+    );
+    res.sendStatus(204); // No Content - șters cu succes
+  } catch (error) {
+    console.error("❌ Eroare la ștergerea produsului:", error);
+    res.status(500).send("Eroare la ștergerea produsului.");
+  } finally {
+    if (connection) {
+      try { await connection.close(); } catch (e) { console.error(e); }
+    }
+  }
+});
+
