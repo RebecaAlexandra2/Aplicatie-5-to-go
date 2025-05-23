@@ -8,6 +8,7 @@
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
   />
+  
   <style>
     body {
       background: linear-gradient(135deg, #f5f0e6, #d6b983);
@@ -437,6 +438,41 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 </script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const nav = document.querySelector("nav");
+  
+    if (user) {
+      // Ascunde link-urile de autentificare și creare cont
+      nav.querySelectorAll("a").forEach(a => {
+        if (a.textContent === "Autentificare" || a.textContent === "Creează cont") {
+          a.style.display = "none";
+        }
+      });
+  
+      // Dacă userul e admin, adaugă link către pagina de admin
+      if (user.role === 'admin') {
+        const adminLink = document.createElement("a");
+        adminLink.href = "admin.html";
+        adminLink.textContent = "Panou Admin";
+        nav.appendChild(adminLink);
+      }
+
+  
+      // Logout
+      document.getElementById("logout-btn").addEventListener("click", () => {
+        localStorage.removeItem("user");
+        location.reload();
+      });
+    }
+  });
+  </script>
+  <section id="admin-produse">
+    <h2>Produse existente</h2>
+    <ul id="lista-produse"></ul>
+  </section>
+  
 <script src="script.js"></script>
 <script src="locatii.js"></script>
 <style src="styles.css"></style>
