@@ -7,6 +7,7 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5002;
 
+app.use(express.static('public'));
 app.use(express.json());
 app.use(cors());
 
@@ -34,6 +35,14 @@ async function connectDB() {
     throw error; // Aruncă eroarea pentru a opri procesul dacă nu se poate conecta
   }
 }
+
+
+async function genHash() {
+  const hash = await bcrypt.hash('test123', 10);
+  console.log(hash);
+}
+
+genHash();
 
 // Ruta pentru meniul produselor
 app.get("/meniu", async (req, res) => {
@@ -123,33 +132,40 @@ app.post("/register", async (req, res) => {
 
 app.post("/verifica-stoc", async (req, res) => {
   const { productId, quantity } = req.body;
-  
+
   const connection = await connectDB();
   if (!connection) {
     return res.status(500).send("Eroare la conectare BD");
   }
 
   try {
-    const maxResult = await connection.execute(
-      `SELECT FLOOR(MIN(i.stock_quantity / r.quantity)) AS max_produse_posibile
+    const result = await connection.execute(
+      `SELECT 
+         FLOOR(MIN((i.stock_quantity - i.minimum_stock) / r.quantity)) AS max_produse_posibile
        FROM ingredients i
        JOIN recipes r ON i.id = r.ingredient_id
        WHERE r.product_id = :productId`,
       { productId },
       { outFormat: oracledb.OUT_FORMAT_OBJECT }
     );
-    
-    
-    const maxProduse = maxResult.rows[0]?.MAX_PRODUSE_POSIBILE ?? 0;
-    
-    if (quantity > maxProduse) {
+
+    const maxDisponibil = result.rows[0]?.MAX_PRODUSE_POSIBILE ?? 0;
+
+    if (quantity > maxDisponibil) {
       return res.json({
         ok: false,
-        mesaj: `Nu se poate comanda ${quantity} bucăți. Maxim disponibile: ${maxProduse}.`
+        mesaj: `Nu se poate comanda ${quantity} bucăți. Maxim disponibile: ${maxDisponibil}.`,
+        maxDisponibil,
       });
     }
 
-    return res.json({ ok: true, mesaj: "Stoc suficient." });
+    let mesaj = "Stoc suficient.";
+    // Avertisment dacă se apropie de minim (ex: sub 2 produse)
+    if (maxDisponibil <= 2) {
+      mesaj = "⚠️ Atenție! Te apropii de stocul minim. Următoarea comandă nu va fi posibilă.";
+    }
+
+    return res.json({ ok: true, mesaj, maxDisponibil });
 
   } catch (error) {
     console.error("❌ Eroare la verificare stoc:", error);
@@ -159,40 +175,117 @@ app.post("/verifica-stoc", async (req, res) => {
   }
 });
 
+
 app.listen(PORT, () => {
   console.log(`✅ Serverul rulează pe portul ${PORT}`);
 });
 
 app.post("/finalizeaza-comanda", async (req, res) => {
-  const { userId, produse } = req.body; // produse = [{ id, price }, ...]
+  const { userId, produse } = req.body;
 
   let connection;
+
   try {
     connection = await connectDB();
 
-    // Calculează suma totală
-    const totalComanda = produse.reduce((acc, p) => acc + p.price, 0);
+    // Verifică rolul userului
+    const userResult = await connection.execute(
+      `SELECT role FROM users WHERE id = :userId`,
+      { userId },
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
 
-    // Calculează punctele câștigate (1 punct per leu)
+    const role = userResult.rows[0]?.ROLE;
+    if (role === "admin") {
+      return res.status(403).json({
+        ok: false,
+        mesaj: "Administratorii nu pot finaliza comenzi."
+      });
+    }
+
+    // Verifică stocul pentru fiecare produs
+    for (const prod of produse) {
+      const stocResult = await connection.execute(
+        `SELECT FLOOR(MIN((i.stock_quantity - NVL(i.minimum_stock, 0)) / r.quantity)) AS max_produse_posibile
+         FROM ingredients i
+         JOIN recipes r ON i.id = r.ingredient_id
+         WHERE r.product_id = :prodId`,
+        { prodId: prod.id },
+        { outFormat: oracledb.OUT_FORMAT_OBJECT }
+      );
+
+      const maxDisponibil = stocResult.rows[0]?.MAX_PRODUSE_POSIBILE ?? 0;
+
+      if (prod.quantity > maxDisponibil) {
+        return res.status(400).json({
+          ok: false,
+          mesaj: `Nu se poate comanda ${prod.quantity} bucăți din produsul ID ${prod.id}. Maxim disponibile: ${maxDisponibil}.`
+        });
+      }
+    }
+
+    // Calculează totalul comenzii
+    const totalComanda = produse.reduce((acc, p) => acc + Number(p.price) * Number(p.quantity), 0);
+
+    // Inserare comandă și obținere ID
+    const orderResult = await connection.execute(
+      `INSERT INTO orders (user_id, total_price, status, created_at)
+       VALUES (:userId, :totalPrice, 'completed', CURRENT_TIMESTAMP)
+       RETURNING id INTO :orderId`,
+      {
+        userId,
+        totalPrice: totalComanda,
+        orderId: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
+      },
+      { autoCommit: false }
+    );
+    
+    const newOrderId = orderResult.outBinds.orderId[0];
+    console.log("ID-ul noii comenzi:", newOrderId);
+    
+    // Inserare itemi comandă
+    for (const prod of produse) {
+      await connection.execute(
+        `INSERT INTO order_items (order_id, product_id, quantity) VALUES (:orderId, :prodId, :cantitate)`,
+        { orderId: newOrderId, prodId: prod.id, cantitate: prod.quantity },
+        { autoCommit: false }
+      );
+    }
+
+    // Scădere stoc pentru fiecare produs comandat
+    for (const prod of produse) {
+      await connection.execute(
+        `BEGIN scade_stoc_produs(:prodId, :cantitate); END;`,
+        { prodId: prod.id, cantitate: prod.quantity },
+        { autoCommit: false }
+      );
+    }
+
+    // Calculează punctele fidelitate câștigate
     const puncteCastigate = Math.floor(totalComanda);
 
-    // Actualizează punctele utilizatorului
+    // Actualizează punctele fidelitate ale utilizatorului
     await connection.execute(
       `UPDATE users SET fidelitate_puncte = NVL(fidelitate_puncte, 0) + :puncte WHERE id = :userId`,
       { puncte: puncteCastigate, userId },
       { autoCommit: false }
     );
 
-    // Inserează în istoricul fidelității
+    // Înregistrează tranzacția fidelitate
     await connection.execute(
       `INSERT INTO fidelitate_tranzactii (user_id, puncte, descriere) VALUES (:userId, :puncte, :descriere)`,
       { userId, puncte: puncteCastigate, descriere: "Puncte câștigate la comandă" },
-      { autoCommit: true }
+      { autoCommit: false }
     );
 
-    res.send(`Comandă finalizată cu succes! Ai câștigat ${puncteCastigate} puncte fidelitate.`);
+    // Commit toate operațiunile
+    await connection.commit();
+
+    res.json({ ok: true, mesaj: `Comandă finalizată cu succes! Ai câștigat ${puncteCastigate} puncte fidelitate.` });
+
   } catch (error) {
-    console.error("❌ Eroare la finalizarea comenzii:", error);
+    if (connection) await connection.rollback();
+    console.error("❌ Eroare la finalizarea comenzii:", error.stack);
     res.status(500).send("Eroare la finalizarea comenzii.");
   } finally {
     if (connection) {
@@ -200,6 +293,8 @@ app.post("/finalizeaza-comanda", async (req, res) => {
     }
   }
 });
+
+
 
 
 app.get("/fidelitate/:userId", async (req, res) => {
@@ -315,15 +410,17 @@ app.get("/raport-vanzari-zi", async (req, res) => {
 
     const result = await connection.execute(
       `SELECT 
-          TO_CHAR(order_date, 'YYYY-MM-DD') AS data, 
-          COUNT(*) AS numar_comenzi, 
-          SUM(total_price) AS valoare_totala
+          TO_CHAR(created_at, 'YYYY-MM-DD') AS data,
+          COUNT(*) AS numar_comenzi,
+          NVL(SUM(total_price), 0) AS valoare_totala
        FROM orders
-       GROUP BY TO_CHAR(order_date, 'YYYY-MM-DD')
+       WHERE created_at >= SYSDATE - 30 -- ultimele 30 zile
+       GROUP BY TO_CHAR(created_at, 'YYYY-MM-DD')
        ORDER BY data DESC`,
       [],
       { outFormat: oracledb.OUT_FORMAT_OBJECT }
     );
+    
 
     res.json(result.rows);
   } catch (error) {
@@ -335,6 +432,7 @@ app.get("/raport-vanzari-zi", async (req, res) => {
     }
   }
 });
+
 app.post("/adauga-produs", async (req, res) => {
   const { name, price, gramaj } = req.body;
 
