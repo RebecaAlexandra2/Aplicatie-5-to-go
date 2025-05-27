@@ -8,7 +8,6 @@
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
   />
-  
   <style>
     body {
       background: linear-gradient(135deg, #f5f0e6, #d6b983);
@@ -196,6 +195,7 @@
         <a href="#cos" class="cart-link">
           🛒 <span id="nr-produse-cos">0</span>
         </a>
+        <a href="admin.html" id="admin-link" style="display:none; margin-left: 25px;">Panou Admin</a>
       </nav>
     </div>
   </header>
@@ -323,158 +323,52 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
-    const swiper = new Swiper('.swiper', {
-      slidesPerView: 1,
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev'
-      }
-    });
-  </script>
-  <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const modal = document.getElementById("modal-verificare");
-  const modalMesaj = document.getElementById("mesaj-verificare");
-  const cosProduse = document.getElementById("cos-produse");
-  const finalizeazaBtn = document.getElementById("finalizare-comanda");
-  const cartCount = document.getElementById("nr-produse-cos");
-
-  let cos = [];
-
-  function showModal(mesaj) {
-  const modal = document.getElementById("modal-verificare");
-  const modalMesaj = document.getElementById("mesaj-verificare");
-  modalMesaj.innerHTML = mesaj;
-  modal.style.display = "flex";
-}
-
-
-  modal.querySelector("button").addEventListener("click", () => {
-    modal.style.display = "none";
-  });
-
-  function updateCartCount() {
-    cartCount.textContent = cos.length;
-  }
-
-  function updateCartView() {
-    if (cos.length === 0) {
-      cosProduse.innerHTML = "<p>Momentan coșul este gol.</p>";
-      return;
-    }
-    cosProduse.innerHTML = "";
-    cos.forEach(item => {
-      const p = document.createElement("p");
-      p.textContent = `${item.name} - ${item.price} lei`;
-      cosProduse.appendChild(p);
-    });
-  }
-
-  document.body.addEventListener("click", (event) => {
-    if (event.target.classList.contains("adauga-cos")) {
-      const produsCard = event.target.closest(".product-card");
-      if (!produsCard) return;
-
-      const name = produsCard.querySelector("h3").textContent;
-      const pretText = produsCard.querySelectorAll("p")[1].textContent; // ex: "250 ml – 7 lei"
-      const priceMatch = pretText.match(/(\d+(\.\d+)?)\s*lei/);
-      const price = priceMatch ? parseFloat(priceMatch[1]) : 0;
-
-      // Afiseaza modal local (fără backend)
-      showModal(`<p>Produsul <strong>${name}</strong> a fost adăugat în coș.</p>`);
-
-      cos.push({ name, price });
-      updateCartCount();
-      updateCartView();
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    console.log("User:", user);
+    if (user && user.role === "admin") {
+      document.getElementById("admin-link").style.display = "inline-block";
     }
   });
   
-
-  finalizeazaBtn.addEventListener("click", () => {
-    if (cos.length === 0) {
-      alert("❌ Coșul este gol!");
-      return;
-    }
-    alert(`✅ Ai finalizat comanda cu ${cos.length} produse.`);
-    cos = [];
-    updateCartCount();
-    updateCartView();
-  });
-
-  updateCartCount();
-  updateCartView();
-});
-
-document.addEventListener("DOMContentLoaded", () => {
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const nav = document.querySelector("nav");
-  if (!nav) return;
+  if (user && user.role === "admin") {
+    // Ascunde toate butoanele Adaugă în coș
+    document.querySelectorAll(".adauga-cos").forEach(btn => btn.style.display = "none");
 
-  if (user) {
-    // Dacă userul e logat, ascundem linkurile de login/register
-    nav.querySelectorAll("a").forEach(a => {
-      if (a.textContent === "Autentificare" || a.textContent === "Creează cont") {
-        a.style.display = "none";
-      }
-    });
+    // Ascunde secțiunea coșului
+    const cosSect = document.getElementById("cos");
+    if (cosSect) cosSect.style.display = "none";
 
-    // Adăugăm în nav profilul userului + buton logout
-    const profilSpan = document.createElement("span");
-    profilSpan.innerHTML = `
-      Salut, <strong>${user.name}</strong>! 
-      <button id="logout-btn" style="margin-left:15px; cursor:pointer;">Deconectare</button>
-    `;
-    nav.appendChild(profilSpan);
+    // Ascunde elemente legate de puncte fidelitate, dacă există
+    const puncteElem = document.getElementById("puncte-fidelitate");
+    if (puncteElem) puncteElem.style.display = "none";
 
-    // Buton logout
-    document.getElementById("logout-btn").addEventListener("click", () => {
-      localStorage.removeItem("user");
-      location.reload();
-    });
+    // Dacă vrei, poți adăuga aici elemente sau linkuri doar pentru admin
   }
 });
 
 </script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const nav = document.querySelector("nav");
-  
-    if (user) {
-      // Ascunde link-urile de autentificare și creare cont
-      nav.querySelectorAll("a").forEach(a => {
-        if (a.textContent === "Autentificare" || a.textContent === "Creează cont") {
-          a.style.display = "none";
-        }
-      });
-  
-      // Dacă userul e admin, adaugă link către pagina de admin
-      if (user.role === 'admin') {
-        const adminLink = document.createElement("a");
-        adminLink.href = "admin.html";
-        adminLink.textContent = "Panou Admin";
-        nav.appendChild(adminLink);
-      }
 
-  
-      // Logout
-      document.getElementById("logout-btn").addEventListener("click", () => {
-        localStorage.removeItem("user");
-        location.reload();
-      });
-    }
-  });
-  </script>
-  <section id="admin-produse">
-    <h2>Produse existente</h2>
-    <ul id="lista-produse"></ul>
-  </section>
-  
+
 <script src="script.js"></script>
 <script src="locatii.js"></script>
 <style src="styles.css"></style>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  const swiper = new Swiper('.swiper', {
+    slidesPerView: 1,
+    spaceBetween: 20,
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+  });
+</script>
 </body>
 </html>
