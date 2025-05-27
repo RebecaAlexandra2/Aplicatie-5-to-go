@@ -307,4 +307,25 @@ SELECT id, name, stock_quantity FROM ingredients ORDER BY id;
 -- 11. Alte interogări utile
 SELECT * FROM users WHERE role = 'admin';
 
-SELECT email, role FROM users ORDER BY email;
+SELECT email role FROM users ORDER BY email;
+
+SHOW USER;
+ALTER SESSION SET CURRENT_SCHEMA = FIVE_TO_GO;
+SELECT * FROM all_tables WHERE table_name = 'USERS' AND owner = 'FIVE_TO_GO';
+SELECT * FROM users;
+UPDATE users
+SET password = '$2b$10$9n0U9hzJ58omFx9uJtV/te5LbOleGLEzrr4FvMdGK9KgiJZSS8mji'
+WHERE email = 'rebeca@example.com';
+COMMIT;
+
+SELECT id, name, email, role FROM users;
+SELECT * FROM orders ORDER BY created_at DESC;
+
+SELECT TO_CHAR(created_at, 'YYYY-MM-DD') AS data, COUNT(*) AS numar_comenzi, NVL(SUM(total_price), 0) AS valoare_totala
+FROM orders
+WHERE created_at >= SYSDATE - 30
+GROUP BY TO_CHAR(created_at, 'YYYY-MM-DD')
+ORDER BY data DESC;
+
+SELECT * FROM orders;
+SELECT created_at FROM orders ORDER BY created_at DESC;
